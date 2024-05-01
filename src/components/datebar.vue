@@ -20,7 +20,7 @@ const emit = defineEmits(['next', 'prev'])
 
 <style scoped lang="scss">
 .date-bar {
-	width: 100%;
+	// width: 100%;
 	padding: var(--padding);
 	display: flex;
 	flex-direction: row;

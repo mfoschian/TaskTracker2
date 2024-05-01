@@ -20,7 +20,7 @@ export function formatDateTime(dt) {
 	return d + ' ' + t;
 }
 
-export function formatDate(dt) {
+export function formatYMD(dt) {
 	if(!dt) return null;
 	if(!dt.getDate) return dt;
 	let d = dt.getFullYear() + '-' + p2(dt.getMonth()+1) + '-' + p2(dt.getDate());
@@ -61,3 +61,13 @@ export function formatDateStr(dt, format) {
 
 	return res;
 }
+
+export const msInADay = 1000 * 60 * 60 * 24;
+export const epochToDate = (tm) => {
+	if(tm==null) return null;
+	let d = new Date();
+	d.setTime(tm);
+	return d;
+}
+
+export const dateToEpoch = (dt) => dt ? dt.getTime() : null;

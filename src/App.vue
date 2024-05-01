@@ -1,49 +1,52 @@
 <template>
 	<div class="app">
 		<div class="angle-button">
-			<button @click="downloadData">Download</button>
+			<button @click="settingsDlg.open()">
+				<SettingsIcon fill="white"/>
+			</button>
 		</div>
 		<div class="top-bar">
-			<DateBar :date="date"
-				@next="addDay(1)"
-				@prev="addDay(-1)"
-			></DateBar>
+			<DateBar :date="date" @next="addDay(1)" @prev="addDay(-1)"></DateBar>
 		</div>
 		<div class="left-side">
 			<TagBar :items="tags" @tagclick="tagClicked"></TagBar>
 		</div>
 		<div class="body">
-			<div class="jobs">
-				<div class="job" v-for="(job,ix) in jobs" :key="ix"
-					:class="{active: job.stop==null}"
-				>
-					<span class="tm">{{ job.start }}</span>
-					<span class="title">{{ job.task }}</span>
-					<span v-if="job.tag">{{ job.tag }}</span>
-				</div>
-			</div>
+			<TasksView :tasks="tasks" @delete="deleteTask" @requestWhat="openWhatDlg" @requestWho="openWhoDlg">
+			</TasksView>
 		</div>
 		<div class="right-side"></div>
 	</div>
+	<ChooseOneDialog ref="whatDlg" :items="whats"></ChooseOneDialog>
+	<ChooseOneDialog ref="whoDlg" :items="whos"></ChooseOneDialog>
+
+	<ModalDlg ref="settingsDlg">Settings ?</ModalDlg>
 </template>
 
 <script setup>
 import DateBar from './components/datebar.vue';
 import TagBar from './components/tagbar.vue';
+import TasksView from './components/tasksbox.vue';
+import ModalDlg from './components/modal-dialog.vue';
+import ChooseOneDialog from './components/choose-one-dialog.vue';
+import SettingsIcon from './components/icons/settings.vue';
 
-import { tags } from './models/tags.js';
-import { getJobsAt, newJob } from './models/jobs.js';
+import { tags } from './models/tag.js';
+import { Task } from './models/task.js';
+import { What } from './models/what.js';
+import { Who } from './models/who.js';
 
 import dayjs from 'dayjs';
 import { ref } from 'vue';
 
 let date = ref(new Date());
-let jobs = ref([]);
+let tasks = ref([]);
+let whatDlg = ref(null);
+let whoDlg = ref(null);
+let settingsDlg = ref(null);
 
-
-async function downloadData() {
-	console.error('Download Not yet implemented');
-}
+let whats = ref([]);
+let whos = ref([]);
 
 async function addDay(n) {
 	let dt = dayjs(date.value);
@@ -54,12 +57,47 @@ async function addDay(n) {
 
 async function loadData() {
 	let dt = date.value;
-	jobs.value = await getJobsAt(dt);
+	tasks.value = await Task.find(dt);
+
+	if(whats.value.lengh == 0) {
+		whats.value = await What.all();
+	}
+
+	if(whos.value.lengh == 0) {
+		whos.value = await Who.all();
+	}
 }
 
 async function tagClicked(tag_id) {
-	let j = newJob(tag_id);
-	jobs.value.unshift(j);
+	let last_task = tasks.value[0];
+	let now = new Date();
+	try {
+		if (last_task && last_task.stop == null) {
+			last_task.stop = now;
+			await last_task.save();
+		}
+		let t = new Task({ tag: tag_id, start: now });
+		await t.save();
+		tasks.value.unshift(t);
+	}
+	catch (err) {
+		console.error(err);
+		debugger
+	}
+}
+
+async function deleteTask(t) {
+	if (!t) return;
+	await t.destroy();
+	await loadData();
+}
+
+async function openWhatDlg() {
+	let choosed = await whatDlg.value.choose(null);
+	debugger
+}
+async function openWhoDlg() {
+	whoDlg.value.open();
 }
 
 loadData();
@@ -80,6 +118,18 @@ loadData();
 .angle-button {
 	grid-area: angle-button;
 	padding: var(--padding);
+	justify-self: center;
+
+	button {
+		display: grid;
+		place-items: center;
+		color: white;
+
+		svg {
+			width: 1rem;
+			height: 1rem;
+		}
+	}
 }
 
 .top-bar {
@@ -96,27 +146,5 @@ loadData();
 
 .right-side {
 	grid-area: right-side;
-}
-
-
-.jobs {
-	.job {
-
-		padding: var(--padding);
-
-		display: flex;
-		flex-direction: row;
-		gap: var(--padding);
-		justify-content: space-between;
-
-		.title {
-			flex-grow: 1;
-		}
-
-		&.active {
-			background-color: crimson;
-			color: white;
-		}
-	}
 }
 </style>
