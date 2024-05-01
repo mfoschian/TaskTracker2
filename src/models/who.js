@@ -13,7 +13,8 @@ export class Who {
 	static async all() {
 		await DB.open();
 
-		let res = await DB.getAll(TABLE).map( r => new Who(r)).sort((w1,w2) => cmp_asc(w1.name, w2.name));
+		let res = await DB.getAll(TABLE);
+		res = res.map( r => new Who(r)).sort((w1,w2) => cmp_asc(w1.name, w2.name));
 		return res;
 	}
 
@@ -25,7 +26,7 @@ export class Who {
 		if(this.id != null)
 			w.id = this.id;
 
-		let dbr = await upsert(TABLE, w );
+		let dbr = await DB.upsert(TABLE, w );
 		this.id = dbr.id;
 	}
 

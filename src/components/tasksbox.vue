@@ -21,16 +21,16 @@
 
 		<template #cell[what]="{data}">
 			<template v-if="data.value == null">
-				<button @click="$emit('requestWhat')">?</button>
+				<button @click="$emit('requestWhat', data.item)">?</button>
 			</template>
-			<template v-else>{{ data.value }}</template>
+			<template v-else><span class="what-text" @dblclick="$emit('requestWhat', data.item)">{{ data.item.what }}</span></template>
 		</template>
 
 		<template #cell[who]="{data}">
 			<template v-if="data.value == null">
-				<button @click="$emit('requestWho')">...</button>
+				<button @click="$emit('requestWho', data.item)">...</button>
 			</template>
-			<template v-else>{{ data.value }}</template>
+			<template v-else><span class="what-text" @dblclick="$emit('requestWho', data.item)">{{ data.item.who }}</span></template>
 		</template>
 	</TaskTable>
 </template>

@@ -1,7 +1,8 @@
 <template>
 	<div class="app">
 		<div class="angle-button">
-			<button @click="settingsDlg.open()">
+			<!-- <button @click="settingsDlg.open()"> -->
+			<button @click="insert_start_data">
 				<SettingsIcon fill="white"/>
 			</button>
 		</div>
@@ -17,8 +18,16 @@
 		</div>
 		<div class="right-side"></div>
 	</div>
-	<ChooseOneDialog ref="whatDlg" :items="whats"></ChooseOneDialog>
-	<ChooseOneDialog ref="whoDlg" :items="whos"></ChooseOneDialog>
+	<ChooseOneDialog ref="whatDlg" :items="whats">
+		<template #item="{data}">
+			{{ data.item.name }}
+		</template>
+	</ChooseOneDialog>
+	<ChooseOneDialog ref="whoDlg" :items="whos">
+		<template #item="{data}">
+			{{ data.item.name }}
+		</template>
+	</ChooseOneDialog>
 
 	<ModalDlg ref="settingsDlg">Settings ?</ModalDlg>
 </template>
@@ -30,6 +39,7 @@ import TasksView from './components/tasksbox.vue';
 import ModalDlg from './components/modal-dialog.vue';
 import ChooseOneDialog from './components/choose-one-dialog.vue';
 import SettingsIcon from './components/icons/settings.vue';
+import {insert_start_data} from './start_data.js'
 
 import { tags } from './models/tag.js';
 import { Task } from './models/task.js';
@@ -59,11 +69,11 @@ async function loadData() {
 	let dt = date.value;
 	tasks.value = await Task.find(dt);
 
-	if(whats.value.lengh == 0) {
+	if(whats.value.length == 0) {
 		whats.value = await What.all();
 	}
 
-	if(whos.value.lengh == 0) {
+	if(whos.value.length == 0) {
 		whos.value = await Who.all();
 	}
 }
@@ -92,12 +102,21 @@ async function deleteTask(t) {
 	await loadData();
 }
 
-async function openWhatDlg() {
+async function openWhatDlg(t) {
 	let choosed = await whatDlg.value.choose(null);
-	debugger
+	console.log( choosed );
+	if(t) {
+		t.what = choosed.name;
+		await t.save();
+	}
 }
-async function openWhoDlg() {
-	whoDlg.value.open();
+async function openWhoDlg(t) {
+	let choosed = await whoDlg.value.choose(null);
+	console.log( choosed );
+	if(t) {
+		t.who = choosed.name;
+		await t.save();
+	}
 }
 
 loadData();

@@ -30,7 +30,7 @@ export class Task {
 		if(this.id != null)
 			task.id = this.id;
 
-		let dbt = await upsert(TABLE, task );
+		let dbt = await DB.upsert(TABLE, task );
 		this.id = dbt.id;
 	}
 
@@ -38,7 +38,7 @@ export class Task {
 		await DB.open();
 		if( this.id == null ) return;
 
-		await remove(TABLE, this.id);
+		await DB.remove(TABLE, this.id);
 	}
 
 	static async find(dt) {

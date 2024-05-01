@@ -57,14 +57,21 @@ defineExpose({
 <style scoped lang="scss">
 .options {
 	width: 100%;
+	height: 100%;
+	overflow-y: auto;
 
 	.option {
 		text-align: center;
 		padding: var(--padding);
+		cursor: pointer;
 
 		&.selected {
 			background-color: blue;
 			color: white;
+		}
+
+		&:hover {
+			font-weight: bold;
 		}
 	}
 }
