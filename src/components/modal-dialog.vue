@@ -105,7 +105,7 @@ dialog {
 			justify-content: start;
 			align-items: center;
 
-			overflow: auto;
+			overflow-y: auto;
 		}
 	}
 }

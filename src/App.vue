@@ -1,8 +1,8 @@
 <template>
 	<div class="app">
 		<div class="angle-button">
-			<!-- <button @click="settingsDlg.open()"> -->
-			<button @click="insert_start_data">
+			<button @click="settingsDlg.open()">
+			<!-- <button @click="insert_start_data"> -->
 				<SettingsIcon fill="white"/>
 			</button>
 		</div>
@@ -29,7 +29,17 @@
 		</template>
 	</ChooseOneDialog>
 
-	<ModalDlg ref="settingsDlg">Settings ?</ModalDlg>
+	<ModalDlg ref="settingsDlg" title="Settings">
+		<Section title="Tags">
+			<TagEditor />
+		</Section>
+		<Section title="Whats">
+			<WhatEditor />
+		</Section>
+		<Section title="Who">
+			<WhoEditor />
+		</Section>
+	</ModalDlg>
 </template>
 
 <script setup>
@@ -40,6 +50,10 @@ import ModalDlg from './components/modal-dialog.vue';
 import ChooseOneDialog from './components/choose-one-dialog.vue';
 import SettingsIcon from './components/icons/settings.vue';
 import {insert_start_data} from './start_data.js'
+import TagEditor from './components/tageditor.vue'
+import WhatEditor from './components/whateditor.vue'
+import WhoEditor from './components/whoeditor.vue'
+import Section from './components/exp-section.vue'
 
 import { tags } from './models/tag.js';
 import { Task } from './models/task.js';
