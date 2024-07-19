@@ -66,7 +66,7 @@ dialog {
 		display: flex;
 		flex-direction: column;
 		justify-content: start;
-		/* overflow: hidden; */
+		overflow: hidden;
 
 		.dlg-title {
 			padding: .3rem;
@@ -105,6 +105,7 @@ dialog {
 			justify-content: start;
 			align-items: center;
 
+			overflow: auto;
 		}
 	}
 }
